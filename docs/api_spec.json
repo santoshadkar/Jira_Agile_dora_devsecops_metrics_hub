@@ -1,0 +1,304 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Jira Agile Metrics & JQL Hub API",
+    "version": "1.0.0",
+    "description": "API First Specification for the Central Jira Metrics, Role Governance, and JQL Generator Portal"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api",
+      "description": "Local Development Server"
+    }
+  ],
+  "paths": {
+    "/metrics": {
+      "get": {
+        "summary": "Retrieve all metrics",
+        "description": "Fetches the complete catalog of Scrum, Kanban, and SAFe metrics, with optional filters for framework, role, mandate level, and search keyword.",
+        "parameters": [
+          {
+            "name": "framework",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["all", "scrum", "kanban", "hybrid", "dora", "devsecops"]
+            }
+          },
+          {
+            "name": "role",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mandate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["all", "mandated", "optional"]
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of matching metrics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": { "type": "integer" },
+                    "metrics": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Metric" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/metrics/{id}": {
+      "get": {
+        "summary": "Get metric by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Metric detail object",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Metric" }
+              }
+            }
+          },
+          "404": {
+            "description": "Metric not found"
+          }
+        }
+      }
+    },
+    "/roles": {
+      "get": {
+        "summary": "Retrieve all roles and their metric governance matrix",
+        "responses": {
+          "200": {
+            "description": "Role catalog with mandated and optional metric breakdown",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "roles": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/RoleSummary" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dashboards/blueprint": {
+      "get": {
+        "summary": "Retrieve dashboard blueprint for a specific role or framework",
+        "parameters": [
+          {
+            "name": "roleId",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "environment",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["cloud", "datacenter"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Configured dashboard blueprint with gadgets and JQL",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DashboardBlueprint" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/jql/generate": {
+      "post": {
+        "summary": "Generate customized JQL queries for Cloud and Data Center",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["metricId"],
+                "properties": {
+                  "metricId": { "type": "string" },
+                  "projectKey": { "type": "string", "default": "PROJ" },
+                  "boardId": { "type": "string", "default": "100" },
+                  "sprintField": { "type": "string", "default": "Sprint" },
+                  "dateWindowDays": { "type": "integer", "default": 30 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Generated JQL strings for both Cloud and Data Center",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "metricId": { "type": "string" },
+                    "metricName": { "type": "string" },
+                    "cloudJql": { "type": "string" },
+                    "dataCenterJql": { "type": "string" },
+                    "gadgetRecommendations": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/GadgetRecommendation" }
+                    },
+                    "cloudVsDcNotes": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Health check",
+        "responses": {
+          "200": {
+            "description": "Service is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "timestamp": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Metric": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "category": { "type": "string" },
+          "framework": { "type": "string", "enum": ["Scrum", "Kanban", "Hybrid", "DORA", "DevSecOps"] },
+          "purpose": { "type": "string" },
+          "formula": { "type": "string" },
+          "benchmark": { "type": "string" },
+          "roles": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "status": { "type": "string", "enum": ["Mandated", "Optional", "N/A"] },
+                "reason": { "type": "string" }
+              }
+            }
+          },
+          "cloudJql": { "type": "string" },
+          "dataCenterJql": { "type": "string" },
+          "cloudVsDcNotes": { "type": "string" },
+          "recommendedGadgets": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/GadgetRecommendation" }
+          },
+          "antiPatterns": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      },
+      "GadgetRecommendation": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "type": { "type": "string" },
+          "configuration": { "type": "string" },
+          "dimensions": { "type": "string" }
+        }
+      },
+      "RoleSummary": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "mandatedCount": { "type": "integer" },
+          "optionalCount": { "type": "integer" },
+          "primaryFocus": { "type": "string" }
+        }
+      },
+      "DashboardBlueprint": {
+        "type": "object",
+        "properties": {
+          "roleId": { "type": "string" },
+          "roleName": { "type": "string" },
+          "dashboardTitle": { "type": "string" },
+          "suggestedLayout": { "type": "string" },
+          "gadgets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "gadgetName": { "type": "string" },
+                "metricName": { "type": "string" },
+                "isMandated": { "type": "boolean" },
+                "filterJql": { "type": "string" },
+                "configInstructions": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

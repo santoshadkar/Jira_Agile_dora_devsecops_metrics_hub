@@ -11,9 +11,9 @@ const {
   getDashboardBlueprint,
   METRICS,
   ROLES
-} = require("./services/metricService");
+} = require("../src/services/metricService");
 
-const { generateMetricJql } = require("./services/jqlService");
+const { generateMetricJql } = require("../src/services/jqlService");
 
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || "127.0.0.1";

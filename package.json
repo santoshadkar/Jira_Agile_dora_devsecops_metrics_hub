@@ -4,9 +4,9 @@
   "description": "Enterprise Central Hub for Scrum & Kanban Jira Metrics, Role Governance, and Dual Cloud/DC JQL Generator",
   "type": "commonjs",
   "scripts": {
-    "start": "node --env-file=.env src/server.js",
+    "start": "node --env-file=.env scripts/dev-server.js",
     "test": "node --test tests/*.test.js",
-    "lint": "node -c src/server.js src/services/jqlService.js src/services/metricService.js src/data/metricsData.js src/data/rolesData.js src/data/gadgetsData.js tests/metrics.test.js tests/api.test.js"
+    "lint": "node -c scripts/dev-server.js src/services/jqlService.js src/services/metricService.js src/data/metricsData.js src/data/rolesData.js src/data/gadgetsData.js tests/metrics.test.js tests/api.test.js"
   },
   "keywords": [
     "jira",

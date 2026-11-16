@@ -2,7 +2,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const { EventEmitter } = require("node:events");
-const { handleRequest } = require("../src/server");
+const { handleRequest } = require("../scripts/dev-server");
 
 /**
  * Helper to dispatch simulated HTTP requests to handleRequest without opening TCP ports

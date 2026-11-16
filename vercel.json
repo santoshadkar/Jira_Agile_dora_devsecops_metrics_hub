@@ -1,9 +1,6 @@
 {
-  "cleanUrls": true,
+  "outputDirectory": "public",
   "rewrites": [
-    { "source": "/api/metrics", "destination": "/api/metrics.js" },
-    { "source": "/api/roles", "destination": "/api/roles.js" },
-    { "source": "/api/health", "destination": "/api/health.js" },
     { "source": "/api/dashboards/blueprint", "destination": "/api/blueprint.js" },
     { "source": "/api/jql/generate", "destination": "/api/jql.js" }
   ]

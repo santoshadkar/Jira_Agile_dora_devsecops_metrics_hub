@@ -2,7 +2,6 @@
   "name": "jira-metrics-hub",
   "version": "1.0.0",
   "description": "Enterprise Central Hub for Scrum & Kanban Jira Metrics, Role Governance, and Dual Cloud/DC JQL Generator",
-  "main": "src/server.js",
   "type": "commonjs",
   "scripts": {
     "start": "node --env-file=.env src/server.js",

@@ -1,7 +1,13 @@
 {
   "outputDirectory": "public",
-  "rewrites": [
-    { "source": "/api/dashboards/blueprint", "destination": "/api/blueprint.js" },
-    { "source": "/api/jql/generate", "destination": "/api/jql.js" }
+  "cleanUrls": true,
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Content-Type", "value": "application/json" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
+      ]
+    }
   ]
 }

@@ -6,6 +6,7 @@
   "type": "commonjs",
   "scripts": {
     "start": "node --env-file=.env src/server.js",
+    "build": "node -e \"console.log('Build successful')\"",
     "test": "node --test tests/*.test.js",
     "lint": "node -c src/server.js src/services/jqlService.js src/services/metricService.js src/data/metricsData.js src/data/rolesData.js src/data/gadgetsData.js tests/metrics.test.js tests/api.test.js"
   },

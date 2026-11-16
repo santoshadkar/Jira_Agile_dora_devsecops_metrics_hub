@@ -227,4 +227,6 @@ if (require.main === module) {
   });
 }
 
-module.exports = { createServer, handleRequest };
+module.exports = (req, res) => handleRequest(req, res);
+module.exports.createServer = createServer;
+module.exports.handleRequest = handleRequest;

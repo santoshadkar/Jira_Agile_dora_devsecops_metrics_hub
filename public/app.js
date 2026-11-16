@@ -174,6 +174,7 @@ async function loadData() {
   if (state.metrics.length > 0) {
     autoSelectFirstMatchingMetric();
     renderActiveTab();
+    return;
   }
 
   try {
